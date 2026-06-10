@@ -288,11 +288,12 @@ with tabs[0]:
         meal_g = df.groupby("type_of_meal_plan", observed=True).agg(
             tasa=("canceled", "mean"), total=("canceled", "count")
         ).reset_index().sort_values("tasa", ascending=True)
-        fig_meal = px.bar(meal_g, y="type_of_meal_plan", x=lambda d: d["tasa"]*100,
-                          orientation="h", color="tasa",
+        meal_g["tasa_pct"] = meal_g["tasa"] * 100
+        fig_meal = px.bar(meal_g, y="type_of_meal_plan", x="tasa_pct",
+                          orientation="h", color="tasa_pct",
                           color_continuous_scale=[[0,C_G3],[.5,C_G5],[1,C_CANCEL]],
-                          labels={"x":"% cancelación","type_of_meal_plan":"Plan"},
-                          text=meal_g["tasa"].apply(lambda v: f"{v*100:.1f}%"))
+                          labels={"tasa_pct":"% cancelación","type_of_meal_plan":"Plan"},
+                          text=meal_g["tasa_pct"].apply(lambda v: f"{v:.1f}%"))
         fig_meal.update_traces(textposition="outside", marker_line_width=0)
         fig_meal.update_coloraxes(showscale=False)
         apply_theme(fig_meal, "Tasa de cancelación (%)"); fig_meal.update_layout(yaxis_title="")
