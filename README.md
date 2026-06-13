@@ -10,7 +10,6 @@
 - Proyecciones no lineales: **t-SNE**, **LLE**, **Mapa de Sammon**
 - Correlaciones: **Pearson**, **Spearman**, **Kendall**
 - Prueba de **Chi-cuadrado** (Cramér's V)
-- **Causalidad de Granger** (series temporales mensuales)
 - Explorador interactivo de variables
 
 ## Cómo correr localmente
