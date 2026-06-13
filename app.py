@@ -522,7 +522,7 @@ with t4:
                      color_discrete_map={"Not_Canceled":C_OK,"Canceled":C_CANCEL},
                      opacity=.5, marginal_x="histogram", marginal_y="histogram",
                      labels={"booking_status":"Estado"})
-    fig.update_traces(marker_size=4)
+    fig.update_traces(selector=dict(type="scatter"), marker_size=4)
     T(fig, f"{sel_v} vs Precio — por estado")
     st.plotly_chart(fig, use_container_width=True)
 
