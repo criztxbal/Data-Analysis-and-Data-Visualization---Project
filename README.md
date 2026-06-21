@@ -12,8 +12,7 @@ Los integrantes que realizaron el siguiente proyecto son:
 - Dashboard de visualización (Plotly + Streamlit)
 - Proyección lineal: **PCA** (Scree Plot + Biplot)
 - Proyecciones no lineales: **t-SNE**, **LLE**, **Mapa de Sammon**
-- Correlaciones: **Pearson**, **Spearman**, **Kendall**
-- Prueba de **Chi-cuadrado** (Cramér's V)
+- Correlaciones: **Pearson**, **Spearman**
 - Explorador interactivo de variables
 
 ## Cómo correr localmente
