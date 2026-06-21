@@ -2,6 +2,10 @@
 
 **Alejandro López | Entrega Individual**
 
+Los integrantes que realizaron el siguiente proyecto son:
++ Cristobal Sanchez Oliver
++ Mendoza Cruz Axel Ademar
+  
 ## Temas cubiertos
 - Evaluación y procesamiento de datos (outliers, tipos, escalas)
 - Muestreo, filtrado y transformación de variables
