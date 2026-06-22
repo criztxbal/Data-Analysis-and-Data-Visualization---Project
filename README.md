@@ -1,4 +1,4 @@
-# 🏨 Hotel Bookings — Dashboard de Analítica y Visualización
+# Hotel Bookings — Dashboard de Analítica y Visualización
 
 **Alejandro López | Entrega Individual**
 
