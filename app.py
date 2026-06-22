@@ -17,6 +17,7 @@ from sklearn.manifold import TSNE, LocallyLinearEmbedding
 from sklearn.metrics import pairwise_distances
 from scipy.stats import pearsonr, spearmanr, chi2_contingency
 from scipy.optimize import minimize
+from sklearn.ensemble import RandomForestClassifier # <--- AÑADIDO PARA EL SIMULADOR
 
 # ── PAGE CONFIG ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -161,19 +162,28 @@ k5.metric("Ingreso estimado",   f"${df['revenue_est'].sum()/1e6:.2f}M",   f"avg 
 st.markdown("<div style='height:.5rem'/>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TABS
+# TABS  <-- MODIFICADO: Agregada la pestaña Simulador
 # ══════════════════════════════════════════════════════════════════════════════
-t1,t2,t3,t4 = st.tabs([
+t1,t2,t3,t4,t5 = st.tabs([
     "Visión General",
     "Proyecciones",
     "Correlaciones",
     "Explorador",
+    "Simulador" 
 ])
 
 # ──────────────────────────────────────────────────────────────────────────────
 # TAB 1 — VISIÓN GENERAL
 # ──────────────────────────────────────────────────────────────────────────────
 with t1:
+    # <-- MODIFICADO: Sección explícita de Hallazgos para la presentación
+    st.info("""
+    **💡 Principales Hallazgos (Insights):**
+    * **El tiempo es crítico:** Las reservas con un 'Lead Time' alto (con mucha anticipación) tienen la mayor probabilidad de ser canceladas.
+    * **Planes de Comida:** El tipo de plan de comida influye en la retención; los clientes con ciertos planes fijos tienden a comprometerse más con su estadía.
+    * **Precios y Dispersión:** Las cancelaciones suelen concentrarse en reservas con precios ligeramente superiores al promedio, donde los clientes son más sensibles a cambiar de opinión.
+    """)
+
     c1, c2 = st.columns(2)
 
     with c1:
@@ -508,6 +518,80 @@ with t4:
     csv_bytes = df.to_csv(index=False).encode("utf-8")
     st.download_button("Descargar dataset filtrado (.csv)", data=csv_bytes,
                         file_name="hotel_filtrado.csv", mime="text/csv")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TAB 5 — SIMULADOR Y DESGLOSE (NUEVO SEGÚN FEEDBACK DE "BALO")
+# ──────────────────────────────────────────────────────────────────────────────
+with t5:
+    sh("Perfil de Cliente y Simulador de Cancelación")
+    st.write("Selecciona un cliente de la base actual filtrada para ver el desglose de su información y evaluar la probabilidad de que cancele su reservación usando nuestro modelo de Machine Learning.")
+
+    # Entrenar modelo predictivo rápido
+    @st.cache_resource(show_spinner=False)
+    def train_rf_model(df_train):
+        features = ["lead_time", "avg_price_per_room", "no_of_special_requests",
+                    "no_of_week_nights", "no_of_weekend_nights", "no_of_adults",
+                    "total_nights", "total_guests"]
+        X = df_train[features].fillna(0)
+        y = df_train["canceled"]
+        rf = RandomForestClassifier(n_estimators=50, max_depth=6, random_state=42)
+        rf.fit(X, y)
+        return rf, features
+
+    rf_model, mod_features = train_rf_model(df_full)
+
+    col_sim1, col_sim2 = st.columns([1, 2])
+
+    with col_sim1:
+        st.markdown("### Seleccionar Cliente")
+        client_options = df.index.tolist()
+        
+        if not client_options:
+            st.warning("No hay clientes bajo los filtros actuales.")
+        else:
+            selected_id = st.selectbox("Elige el ID de la reserva:", client_options[:500], help="Listando los primeros 500 bajo el filtro actual.")
+            
+            if selected_id is not None:
+                client_data = df.loc[[selected_id]]
+                X_client = client_data[mod_features].fillna(0)
+                
+                # Obtener probabilidad de cancelar (clase 1)
+                prob_cancel = rf_model.predict_proba(X_client)[0][1]
+                pred_label = "🚨 Va a cancelar" if prob_cancel > 0.5 else "✅ No va a cancelar"
+                real_status = client_data['booking_status'].values[0]
+
+                st.markdown("### Predicción del Modelo")
+                st.metric(label="Resultado Predictivo", value=pred_label)
+                st.metric(label="Probabilidad de Cancelación", value=f"{prob_cancel*100:.1f}%")
+                st.caption(f"Status real en la base: **{real_status}**")
+
+    with col_sim2:
+        if client_options and selected_id is not None:
+            st.markdown("### Desglose de Datos del Cliente")
+            st.write("Información detallada utilizada para perfilar a esta reserva en particular:")
+            
+            # Formatear el dataframe para verlo transupuesto y ordenado
+            disp_df = client_data[mod_features].T.rename(columns={selected_id: "Valor"})
+            st.dataframe(disp_df, use_container_width=True)
+
+            st.markdown("### Comparativa de variables clave vs Promedio")
+            
+            # Gráfica rápida comparando al cliente vs todos los demás
+            df_means = df_full[mod_features].mean()
+            client_vals = client_data[mod_features].iloc[0]
+            
+            comp_df = pd.DataFrame({
+                "Métrica": mod_features,
+                "Este Cliente": client_vals.values,
+                "Promedio Global": df_means.values
+            })
+            
+            fig_comp = px.bar(comp_df, x="Métrica", y=["Este Cliente", "Promedio Global"], barmode="group",
+                              color_discrete_map={"Este Cliente": C_OK, "Promedio Global": "#30363D"})
+            T(fig_comp, "Análisis de peso de variables del Cliente")
+            fig_comp.update_layout(yaxis_title="Unidades / Días / $", xaxis_tickangle=-35)
+            st.plotly_chart(fig_comp, use_container_width=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("""
