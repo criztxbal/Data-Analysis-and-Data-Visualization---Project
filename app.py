@@ -3,9 +3,8 @@ Hotel Bookings — Dashboard de Analítica y Visualización
 Alejandro López | Entrega Individual
 """
 
-import warnings, logging
+import warnings
 warnings.filterwarnings("ignore")
-logging.getLogger("statsmodels").setLevel(logging.ERROR)
 
 import numpy as np
 import pandas as pd
@@ -16,8 +15,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE, LocallyLinearEmbedding
 from sklearn.metrics import pairwise_distances
-from scipy.stats import pearsonr, spearmanr, kendalltau, chi2_contingency
-from statsmodels.tsa.stattools import grangercausalitytests
+from scipy.stats import pearsonr, spearmanr, chi2_contingency
 from scipy.optimize import minimize
 
 # ── PAGE CONFIG ────────────────────────────────────────────────────────────────
@@ -165,12 +163,10 @@ st.markdown("<div style='height:.5rem'/>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
-t1,t2,t3,t4,t5,t6 = st.tabs([
+t1,t2,t3,t4 = st.tabs([
     "📊 Visión General",
-    "📈 Series & Estacionalidad",
     "🔵 Proyecciones",
     "🔗 Correlaciones",
-    "🧮 Chi² & Granger",
     "🔍 Explorador",
 ])
 
@@ -254,77 +250,9 @@ with t1:
     st.plotly_chart(fig, use_container_width=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# TAB 2 — SERIES & ESTACIONALIDAD
+# TAB 2 — PROYECCIONES  (lazy: solo carga al abrir la pestaña)
 # ──────────────────────────────────────────────────────────────────────────────
 with t2:
-    sh("Volumen mensual de reservas")
-    mly = df.groupby("arrival_month",observed=True).agg(
-        total=("canceled","count"), canceladas=("canceled","sum")).reset_index()
-    mly["no_c"] = mly["total"] - mly["canceladas"]
-    mly["mes"]  = mly["arrival_month"].map(MONTHS)
-    mly["tasa"] = mly["canceladas"]/mly["total"]*100
-
-    fig = go.Figure()
-    fig.add_trace(go.Bar(x=mly["mes"], y=mly["no_c"],   name="No cancelada",
-                          marker_color=C_OK,     marker_line_width=0))
-    fig.add_trace(go.Bar(x=mly["mes"], y=mly["canceladas"], name="Cancelada",
-                          marker_color=C_CANCEL,  marker_line_width=0))
-    T(fig,"Reservas por mes"); fig.update_layout(barmode="stack",
-        yaxis_title="Reservas", xaxis_title="Mes")
-    st.plotly_chart(fig, use_container_width=True)
-
-    ca, cb = st.columns(2)
-    with ca:
-        sh("Tasa de cancelación mensual")
-        fig = go.Figure(go.Scatter(
-            x=mly["mes"], y=mly["tasa"].round(1),
-            mode="lines+markers+text",
-            line=dict(color=C_CANCEL,width=2.5),
-            marker=dict(size=9,color=C_CANCEL,line=dict(color="#0D1117",width=2)),
-            text=mly["tasa"].apply(lambda v:f"{v:.1f}%"), textposition="top center",
-            textfont=dict(size=10)))
-        T(fig,"% Cancelación por mes")
-        fig.update_layout(yaxis_title="%", xaxis_title="Mes",
-                          yaxis_range=[0,mly["tasa"].max()*1.35])
-        st.plotly_chart(fig, use_container_width=True)
-
-    with cb:
-        sh("Ingreso estimado por temporada")
-        sr = df[df["canceled"]==0].groupby("arrival_season",observed=True)["revenue_est"].mean().reset_index()
-        sr.columns = ["Temporada","Promedio"]
-        fig = px.bar(sr, x="Temporada", y="Promedio", color="Temporada",
-                     color_discrete_sequence=PAL,
-                     text=sr["Promedio"].apply(lambda v:f"${v:,.0f}"))
-        fig.update_traces(textposition="outside", marker_line_width=0)
-        T(fig,"Ingreso promedio por reserva confirmada (USD)")
-        fig.update_layout(showlegend=False, yaxis_title="USD")
-        st.plotly_chart(fig, use_container_width=True)
-
-    sh("Heatmap — % Cancelación mes × plan de comida")
-    ph = df.groupby(["arrival_month","type_of_meal_plan"],observed=True)["canceled"].mean().unstack()*100
-    ph.index = [MONTHS[m] for m in ph.index]
-    fig = px.imshow(ph, color_continuous_scale=[[0,C_G3],[.4,C_G5],[1,C_CANCEL]],
-                    text_auto=".0f", aspect="auto",
-                    labels=dict(x="Plan de comida",y="Mes",color="% Cancel."))
-    T(fig,"Cancelación (%) — Mes × Plan de comida")
-    fig.update_coloraxes(colorbar_title="% Cancel.")
-    st.plotly_chart(fig, use_container_width=True)
-
-    sh("Lead time — estado por categoría de anticipación")
-    lt = df.groupby(["lead_time_cat","booking_status"],observed=True).size().reset_index(name="n")
-    lt["pct"] = lt["n"] / lt.groupby("lead_time_cat",observed=True)["n"].transform("sum") * 100
-    fig = px.bar(lt, x="lead_time_cat", y="pct", color="booking_status",
-                 color_discrete_map={"Not_Canceled":C_OK,"Canceled":C_CANCEL},
-                 barmode="stack", text=lt["pct"].apply(lambda v:f"{v:.0f}%"),
-                 labels={"lead_time_cat":"Anticipación","pct":"% del grupo","booking_status":"Estado"})
-    fig.update_traces(textposition="inside", textfont_size=11, marker_line_width=0)
-    T(fig,"Estado según anticipación de reserva"); fig.update_layout(yaxis_title="%")
-    st.plotly_chart(fig, use_container_width=True)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# TAB 3 — PROYECCIONES  (lazy: solo carga al abrir la pestaña)
-# ──────────────────────────────────────────────────────────────────────────────
-with t3:
     FEATURES = ["lead_time","avg_price_per_room","no_of_special_requests",
                 "no_of_week_nights","no_of_weekend_nights","no_of_adults",
                 "no_of_children","no_of_previous_cancellations",
@@ -455,9 +383,9 @@ with t3:
         st.success("✅ Proyecciones completadas. PCA (lineal) muestra varianza global. t-SNE y LLE preservan estructura local. Sammon minimiza el estrés de distancias.")
 
 # ──────────────────────────────────────────────────────────────────────────────
-# TAB 4 — CORRELACIONES
+# TAB 3 — CORRELACIONES
 # ──────────────────────────────────────────────────────────────────────────────
-with t4:
+with t3:
     NUM_VARS = ["lead_time","avg_price_per_room","no_of_special_requests",
                 "no_of_week_nights","no_of_weekend_nights","no_of_adults",
                 "no_of_previous_cancellations","no_of_previous_bookings_not_canceled",
@@ -467,8 +395,8 @@ with t4:
 
     with m_col:
         sh("Método de correlación")
-        corr_method = st.radio("",["pearson","spearman","kendall"], horizontal=True,
-            format_func=lambda m:{"pearson":"Pearson r","spearman":"Spearman ρ","kendall":"Kendall τ"}[m],
+        corr_method = st.radio("",["pearson","spearman"], horizontal=True,
+            format_func=lambda m:{"pearson":"Pearson r","spearman":"Spearman ρ"}[m],
             key="corr_radio")
         cm = df[NUM_VARS].corr(method=corr_method)
         # triangulo inferior
@@ -488,18 +416,15 @@ with t4:
             if col == "canceled": continue
             rp,pp = pearsonr(df[col], df["canceled"])
             rs,ps = spearmanr(df[col], df["canceled"])
-            rk,pk = kendalltau(df[col], df["canceled"])
             res_list.append({"Variable":col,
                 "Pearson r":round(rp,4),"p_p":round(pp,5),
-                "Spearman ρ":round(rs,4),"p_s":round(ps,5),
-                "Kendall τ":round(rk,4),"p_k":round(pk,5)})
+                "Spearman ρ":round(rs,4),"p_s":round(ps,5)})
         df_cr = pd.DataFrame(res_list).sort_values("Pearson r", key=abs, ascending=False)
 
         fig = go.Figure()
         xv = df_cr["Variable"]
         for col_n, color, name in [("Pearson r",C_OK,"Pearson r"),
-                                    ("Spearman ρ",C_G4,"Spearman ρ"),
-                                    ("Kendall τ",C_G3,"Kendall τ")]:
+                                    ("Spearman ρ",C_G4,"Spearman ρ")]:
             fig.add_trace(go.Bar(name=name, x=xv, y=df_cr[col_n],
                                   marker_color=color, opacity=.87, marker_line_width=0))
         fig.add_hline(y=0, line_color="#30363D")
@@ -511,7 +436,7 @@ with t4:
     sh("Tabla de coeficientes y significancia")
     df_show = df_cr.copy()
     df_show["Sig."] = df_show["p_p"].apply(lambda p:"✅" if p<0.05 else "❌")
-    st.dataframe(df_show.rename(columns={"p_p":"p (P)","p_s":"p (S)","p_k":"p (K)"}),
+    st.dataframe(df_show.rename(columns={"p_p":"p (P)","p_s":"p (S)"}),
                  use_container_width=True, hide_index=True)
 
     sh("Scatter interactivo — variable seleccionada vs precio")
@@ -527,116 +452,9 @@ with t4:
     st.plotly_chart(fig, use_container_width=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# TAB 5 — CHI² & GRANGER
+# TAB 4 — EXPLORADOR
 # ──────────────────────────────────────────────────────────────────────────────
-with t5:
-    # ── Chi-cuadrado
-    @st.cache_data
-    def calc_chi2(data_hash):
-        cat_vars = ["type_of_meal_plan","required_car_parking_space",
-                    "repeated_guest","arrival_season","lead_time_cat","total_guests"]
-        rows = []
-        for var in cat_vars:
-            ct = pd.crosstab(df[var], df["booking_status"])
-            if ct.shape[0]<2 or ct.shape[1]<2: continue
-            chi2, p, dof, _ = chi2_contingency(ct)
-            n = ct.sum().sum()
-            V = np.sqrt(chi2/(n*(min(ct.shape)-1)))
-            rows.append({"Variable":str(var),"χ²":round(chi2,2),"p-valor":round(p,6),
-                          "GL":dof,"Cramér's V":round(V,4),"Sig":"✅" if p<0.05 else "❌"})
-        return pd.DataFrame(rows).sort_values("Cramér's V",ascending=False)
-
-    df_chi = calc_chi2(len(df))  # hash por tamaño (simple, suficiente)
-
-    cc1, cc2 = st.columns(2)
-
-    with cc1:
-        sh("Chi² — Cramér's V por variable")
-        fig = px.bar(df_chi, x="Cramér's V", y="Variable", orientation="h",
-                     color="Cramér's V",
-                     color_continuous_scale=[[0,C_G3],[.35,C_G5],[1,C_CANCEL]],
-                     text=df_chi["Cramér's V"].apply(lambda v:f"{v:.3f}"),
-                     labels={"Cramér's V":"Cramér's V"})
-        fig.update_traces(textposition="outside", marker_line_width=0)
-        fig.update_coloraxes(showscale=False)
-        T(fig,"Asociación con booking_status"); fig.update_layout(yaxis_title="")
-        st.plotly_chart(fig, use_container_width=True)
-        st.dataframe(df_chi, use_container_width=True, hide_index=True)
-
-    with cc2:
-        sh("Causalidad de Granger")
-        # series temporales
-        @st.cache_data
-        def granger_ts():
-            d2 = df_full.copy()
-            d2["date"] = pd.to_datetime(
-                d2[["arrival_year","arrival_month","arrival_date"]]
-                .rename(columns={"arrival_year":"year","arrival_month":"month","arrival_date":"day"}),
-                errors="coerce")
-            mts = d2.groupby(d2["date"].dt.to_period("M")).agg(
-                cancel_rate=("canceled","mean"), avg_lead=("lead_time","mean"),
-                avg_price=("avg_price_per_room","mean"),
-                avg_req=("no_of_special_requests","mean")).reset_index()
-            mts["date"] = mts["date"].astype(str)
-            return mts.sort_values("date").reset_index(drop=True)
-
-        mts = granger_ts()
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=mts["date"], y=mts["cancel_rate"]*100,
-            name="Tasa cancel. (%)", mode="lines+markers",
-            line=dict(color=C_CANCEL,width=2), marker=dict(size=6)))
-        norm = (mts["avg_lead"]-mts["avg_lead"].mean())/mts["avg_lead"].std()
-        fig.add_trace(go.Scatter(x=mts["date"],
-            y=norm*5 + mts["cancel_rate"].mean()*100,
-            name="Lead time (norm.)", mode="lines+markers",
-            line=dict(color=C_OK,width=2,dash="dot"), marker=dict(size=4)))
-        T(fig,"Series temporales mensuales")
-        fig.update_layout(xaxis_title="Mes", yaxis_title="% / norm.",
-                           xaxis_tickangle=-45)
-        st.plotly_chart(fig, use_container_width=True)
-
-        # Granger test
-        gr_rows = []
-        for pred, label in [("avg_lead","Lead time"),("avg_price","Precio"),("avg_req","Solicitudes")]:
-            data_g = mts[["cancel_rate",pred]].dropna().values
-            if len(data_g) < 7: continue
-            res = grangercausalitytests(data_g, maxlag=3, verbose=False)
-            for lag in range(1,4):
-                f = res[lag][0]["ssr_ftest"][0]; p = res[lag][0]["ssr_ftest"][1]
-                gr_rows.append({"Variable":label,"Lag":lag,
-                                 "F":round(f,3),"p-valor":round(p,4),
-                                 "Causalidad":"✅" if p<0.05 else "—"})
-        if gr_rows:
-            df_gr = pd.DataFrame(gr_rows)
-            pv = df_gr.pivot(index="Variable", columns="Lag", values="p-valor")
-            fig = px.imshow(pv, text_auto=".3f",
-                            color_continuous_scale=[[0,C_G3],[.05,C_G5],[.2,C_CANCEL],[1,"#3D1A1A"]],
-                            zmin=0, zmax=.2, aspect="auto",
-                            labels=dict(x="Lag",color="p-valor"))
-            T(fig,"Granger — p-valores (verde<0.05 = causalidad)")
-            st.plotly_chart(fig, use_container_width=True)
-            st.dataframe(df_gr, use_container_width=True, hide_index=True)
-
-    sh("Tablas de contingencia — Top 3 variables (Chi²)")
-    top3 = df_chi.head(3)["Variable"].tolist()
-    tc1, tc2, tc3 = st.columns(3)
-    for col_ct, var in zip([tc1,tc2,tc3], top3):
-        ctn = pd.crosstab(df[var], df["booking_status"], normalize="index")*100
-        ctn_r = ctn.reset_index()
-        fig = px.bar(ctn_r, x=var, y=["Canceled","Not_Canceled"],
-                     color_discrete_map={"Canceled":C_CANCEL,"Not_Canceled":C_OK},
-                     barmode="stack", labels={"value":"% grupo","variable":"Estado"})
-        fig.update_traces(marker_line_width=0)
-        T(fig, str(var))
-        fig.update_layout(height=310, yaxis_title="%", xaxis_title="",
-                           xaxis_tickangle=-20)
-        col_ct.plotly_chart(fig, use_container_width=True)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# TAB 6 — EXPLORADOR
-# ──────────────────────────────────────────────────────────────────────────────
-with t6:
+with t4:
     num_all = [c for c in df_full.select_dtypes(include=["int64","float64"]).columns
                if c not in ["canceled","meal_enc","season_enc"]]
     cat_all = ["type_of_meal_plan","arrival_season","lead_time_cat",
@@ -696,6 +514,6 @@ st.markdown("""
 <hr style='border-color:#30363D;margin:2rem 0 .8rem'/>
 <div style='text-align:center;color:#8B949E;font-size:.72rem;padding-bottom:.8rem'>
   Hotel Bookings Analytics · Analítica y Visualización de Datos · Alejandro López<br>
-  PCA · t-SNE · LLE · Mapa de Sammon · Pearson · Spearman · Kendall · Chi² · Granger
+  PCA · t-SNE · LLE · Mapa de Sammon · Pearson · Spearman · Chi² · Cramér's V
 </div>
 """, unsafe_allow_html=True)
