@@ -59,12 +59,17 @@ button[data-baseweb="tab"][aria-selected="true"]{color:var(--acc)!important;
 # ── COLORES & TEMA ─────────────────────────────────────────────────────────────
 C_OK, C_CANCEL, C_G3, C_G4, C_G5 = "#58A6FF","#F78166","#3FB950","#D2A8FF","#FFA657"
 PAL = [C_OK, C_CANCEL, C_G3, C_G4, C_G5, "#79C0FF", "#FF7B72"]
-BASE = dict(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#E6EDF3", family="Inter"),
-            margin=dict(l=20,r=20,t=42,b=20),
-            legend=dict(bgcolor="rgba(0,0,0,0)",bordercolor="#30363D",borderwidth=1),
-            xaxis=dict(gridcolor="#21262D",linecolor="#30363D",zerolinecolor="#30363D"),
-            yaxis=dict(gridcolor="#21262D",linecolor="#30363D",zerolinecolor="#30363D"))
+
+# Configuración base más limpia para las gráficas
+BASE = dict(
+    paper_bgcolor="rgba(0,0,0,0)", 
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#8B949E", family="Inter", size=12),
+    margin=dict(l=10, r=10, t=40, b=20),
+    legend=dict(bgcolor="rgba(22,27,34,0.7)", bordercolor="#30363D", borderwidth=1),
+    xaxis=dict(gridcolor="#1C2128", linecolor="#30363D", zerolinecolor="#30363D", title_font=dict(color="#E6EDF3")),
+    yaxis=dict(gridcolor="#1C2128", linecolor="#30363D", zerolinecolor="#30363D", title_font=dict(color="#E6EDF3"))
+)
 
 def T(fig, title=""):
     fig.update_layout(**BASE)
