@@ -27,19 +27,18 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── ESTILOS (TEMA LIGHT PREMIUM / BLANCO HUESO) ───────────────────────────────
+# ── ESTILOS (TEMA LIGHT PREMIUM / BLANCO HUESO CÁLIDO) ───────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
 :root {
-    /* Paleta Light / Blanco Hueso */
-    --bg: #F6F6F2;       /* Fondo principal blanco hueso */
-    --surf: #FFFFFF;     /* Tarjetas en blanco puro para contrastar */
-    --bord: #E5E7EB;     /* Bordes grises muy suaves */
-    --acc: #2563EB;      /* Azul fuerte para acentos y pestañas */
-    --txt: #111827;      /* Texto principal casi negro */
-    --muted: #4B5563;    /* Gris oscuro para subtítulos (completamente visible) */
+    --bg:   #F4F1EC;     /* hueso cálido, tira a arena */
+    --surf: #FDFAF5;     /* blanco crema para tarjetas */
+    --bord: #DDD8CE;     /* borde arena tenue */
+    --acc:  #3B6FB5;     /* azul acero calmado */
+    --txt:  #1C1C1E;     /* casi negro cálido */
+    --muted:#5C5549;     /* gris pardo para subtítulos */
     --r: 12px;
 }
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
@@ -68,7 +67,7 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
     border: 1px solid var(--bord);
     border-radius: var(--r);
     padding: 1.2rem 1.5rem !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.04);
 }
 [data-testid="stMetricLabel"] {
     color: var(--muted) !important;
@@ -100,7 +99,7 @@ button[data-baseweb="tab"]:hover {
 button[data-baseweb="tab"][aria-selected="true"] {
     color: var(--acc) !important;
     border-bottom-color: var(--acc) !important;
-    background: linear-gradient(0deg, rgba(37,99,235,0.05) 0%, transparent 100%) !important;
+    background: linear-gradient(0deg, rgba(59,111,181,0.06) 0%, transparent 100%) !important;
 }
 
 /* Títulos de sección */
@@ -113,7 +112,7 @@ button[data-baseweb="tab"][aria-selected="true"] {
     border-left: 4px solid var(--acc);
     padding-left: 0.7rem;
     margin: 2rem 0 1rem;
-    background: linear-gradient(90deg, rgba(37,99,235,0.08) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(59,111,181,0.06) 0%, transparent 100%);
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
 }
@@ -123,35 +122,59 @@ button[data-baseweb="tab"][aria-selected="true"] {
     font-weight: 800;
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
-    background: rgba(37,99,235,0.15);
+    background: rgba(59,111,181,0.10);
     color: var(--acc);
-    border: 1px solid rgba(37,99,235,0.3);
+    border: 1px solid rgba(59,111,181,0.25);
     margin-bottom: 0.5rem;
     letter-spacing: 0.05em;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ── COLORES & TEMA (GRÁFICAS) ──────────────────────────────────────────────────
-# Paleta adaptada para fondo claro
-C_OK, C_CANCEL, C_G3, C_G4, C_G5 = "#2563EB", "#E11D48", "#059669", "#7C3AED", "#D97706"
-PAL = [C_OK, C_CANCEL, C_G3, C_G4, C_G5, "#0284C7", "#BE123C"]
+# ── COLORES & TEMA (GRÁFICAS) — paleta cálida armónica ───────────────────────
+C_OK      = "#3B7DD8"   # azul índigo suave
+C_CANCEL  = "#C0392B"   # rojo ladrillo oscuro
+C_G3      = "#27AE60"   # verde salvia
+C_G4      = "#7B68B5"   # violeta apagado
+C_G5      = "#C87941"   # ámbar tostado
+PAL = [C_OK, C_CANCEL, C_G3, C_G4, C_G5, "#2980B9", "#A93226"]
 
-# Configuración base para fondo claro (Letras negras, fuertes y negritas)
+# Configuración base para fondo cálido
 BASE = dict(
-    paper_bgcolor="rgba(0,0,0,0)", 
+    paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#111827", family="Inter", size=13, weight="bold"), 
+    font=dict(color="#1C1C1E", family="Inter", size=13, weight="bold"),
     margin=dict(l=10, r=10, t=50, b=30),
-    legend=dict(bgcolor="rgba(255,255,255,0.9)", bordercolor="#E5E7EB", borderwidth=1, font=dict(color="#111827", size=12, weight="bold")),
-    xaxis=dict(gridcolor="#E5E7EB", linecolor="#9CA3AF", zerolinecolor="#9CA3AF", title_font=dict(color="#111827", size=14, weight="bold"), tickfont=dict(color="#4B5563", size=12, weight="bold")),
-    yaxis=dict(gridcolor="#E5E7EB", linecolor="#9CA3AF", zerolinecolor="#9CA3AF", title_font=dict(color="#111827", size=14, weight="bold"), tickfont=dict(color="#4B5563", size=12, weight="bold"))
+    legend=dict(
+        bgcolor="rgba(253,250,245,0.95)",
+        bordercolor="#DDD8CE",
+        borderwidth=1,
+        font=dict(color="#1C1C1E", size=12, weight="bold")
+    ),
+    xaxis=dict(
+        gridcolor="#E8E4DC",
+        linecolor="#C4BFB5",
+        zerolinecolor="#C4BFB5",
+        title_font=dict(color="#1C1C1E", size=14, weight="bold"),
+        tickfont=dict(color="#5C5549", size=12, weight="bold")
+    ),
+    yaxis=dict(
+        gridcolor="#E8E4DC",
+        linecolor="#C4BFB5",
+        zerolinecolor="#C4BFB5",
+        title_font=dict(color="#1C1C1E", size=14, weight="bold"),
+        tickfont=dict(color="#5C5549", size=12, weight="bold")
+    )
 )
 
 def T(fig, title=""):
     fig.update_layout(**BASE)
     if title:
-        fig.update_layout(title=dict(text=title, font=dict(size=16, color="#111827", weight="bold"), x=0))
+        fig.update_layout(title=dict(
+            text=title,
+            font=dict(size=16, color="#1C1C1E", weight="bold"),
+            x=0
+        ))
     return fig
 
 def sh(text):
@@ -184,10 +207,10 @@ with st.sidebar:
     st.markdown("""
     <div style='text-align:center;padding:1rem 0 .5rem'>
       <div style='font-size:2rem'><img src="https://cdn-icons-png.flaticon.com/512/235/235889.png"></div>
-      <div style='font-weight:800;font-size:1.05rem;color:#111827;'>Hotel Analytics</div>
-      <div style='font-size:.72rem;color:#4B5563'>Alejandro López</div>
+      <div style='font-weight:800;font-size:1.05rem;color:#1C1C1E;'>Hotel Analytics</div>
+      <div style='font-size:.72rem;color:#5C5549'>Alejandro López</div>
     </div>
-    <hr style='border-color:#E5E7EB;margin:.5rem 0 1rem'/>
+    <hr style='border-color:#DDD8CE;margin:.5rem 0 1rem'/>
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="sh">Filtros globales</div>', unsafe_allow_html=True)
@@ -201,12 +224,12 @@ with st.sidebar:
     sel_status = st.pills("Estado reserva",
                            options=["Todos","Not_Canceled","Canceled"], default="Todos")
 
-    st.markdown('<hr style="border-color:#E5E7EB;margin:1rem 0"/>', unsafe_allow_html=True)
+    st.markdown('<hr style="border-color:#DDD8CE;margin:1rem 0"/>', unsafe_allow_html=True)
     st.markdown('<div class="sh">Proyecciones</div>', unsafe_allow_html=True)
     proj_n = st.slider("Muestra (t-SNE / LLE)", 300, 2000, 800, 100,
                         help="Reduce para acelerar el cálculo")
 
-    st.markdown('<hr style="border-color:#E5E7EB;margin:1rem 0"/>', unsafe_allow_html=True)
+    st.markdown('<hr style="border-color:#DDD8CE;margin:1rem 0"/>', unsafe_allow_html=True)
     st.caption("Analítica y Visualización de Datos\nDataset: 25,811 reservas · 16 variables")
 
 # ── FILTROS ───────────────────────────────────────────────────────────────────
@@ -224,10 +247,10 @@ if df.empty:
 st.markdown(f"""
 <div style='padding:.4rem 0 1.2rem'>
   <span class="badge">DASHBOARD INTERACTIVO</span>
-  <h1 style='margin:0;font-size:1.9rem;font-weight:800;color:#111827;'>
+  <h1 style='margin:0;font-size:1.9rem;font-weight:800;color:#1C1C1E;'>
     Hotel Bookings — Analítica Completa
   </h1>
-  <p style='color:#4B5563;margin:.25rem 0 0;font-size:.88rem;font-weight:600;'>
+  <p style='color:#5C5549;margin:.25rem 0 0;font-size:.88rem;font-weight:600;'>
     {len(df):,} reservas seleccionadas · {df["canceled"].mean()*100:.1f}% tasa de cancelación
   </p>
 </div>""", unsafe_allow_html=True)
@@ -249,7 +272,7 @@ t1,t2,t3,t4,t5 = st.tabs([
     "Proyecciones",
     "Correlaciones",
     "Explorador",
-    "Simulador" 
+    "Simulador"
 ])
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -264,12 +287,12 @@ with t1:
         cnt.columns = ["status","count"]
         fig = go.Figure(go.Pie(
             labels=cnt["status"], values=cnt["count"], hole=.60,
-            marker=dict(colors=[C_OK,C_CANCEL], line=dict(color="#FFFFFF",width=2)),
+            marker=dict(colors=[C_OK, C_CANCEL], line=dict(color="#FDFAF5", width=2)),
             textinfo="percent+label", textfont=dict(size=13, color="#FFFFFF", weight="bold")))
         fig.update_layout(**BASE, showlegend=False,
-            title=dict(text="Distribución de estado",font=dict(size=14,color="#111827", weight="bold"),x=0),
+            title=dict(text="Distribución de estado", font=dict(size=14, color="#1C1C1E", weight="bold"), x=0),
             annotations=[dict(text=f"<b>{len(df):,}</b><br>reservas",
-                              x=.5,y=.5,showarrow=False,font=dict(size=15,color="#111827"))])
+                              x=.5, y=.5, showarrow=False, font=dict(size=15, color="#1C1C1E"))])
         st.plotly_chart(fig, use_container_width=True)
 
     with c2:
@@ -291,8 +314,8 @@ with t1:
     with c3:
         sh("Lead time vs cancelación")
         fig = go.Figure()
-        for status, color, name in [("Not_Canceled",C_OK,"No cancelada"),
-                                     ("Canceled",C_CANCEL,"Cancelada")]:
+        for status, color, name in [("Not_Canceled", C_OK, "No cancelada"),
+                                     ("Canceled", C_CANCEL, "Cancelada")]:
             s = df[df["booking_status"]==status]["lead_time"]
             fig.add_trace(go.Histogram(x=s, name=f"{name} (μ={s.mean():.0f}d)",
                 nbinsx=40, opacity=.8, marker_color=color, marker_line_width=0))
@@ -332,7 +355,7 @@ with t1:
     st.plotly_chart(fig, use_container_width=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# TAB 2 — PROYECCIONES  (lazy: solo carga al abrir la pestaña)
+# TAB 2 — PROYECCIONES
 # ──────────────────────────────────────────────────────────────────────────────
 with t2:
     FEATURES = ["lead_time","avg_price_per_room","no_of_special_requests",
@@ -392,8 +415,8 @@ with t2:
                                   name="Acumulada", mode="lines+markers",
                                   line=dict(color=C_CANCEL,width=3),
                                   marker=dict(size=7)))
-        fig.add_hline(y=80, line_dash="dash", line_color="#4B5563",
-                      annotation_text="80%", annotation_font_color="#4B5563")
+        fig.add_hline(y=80, line_dash="dash", line_color="#5C5549",
+                      annotation_text="80%", annotation_font_color="#5C5549")
         T(fig,"Varianza por componente")
         fig.update_layout(xaxis_title="Componente", yaxis_title="%", yaxis_range=[0,107])
         st.plotly_chart(fig, use_container_width=True)
@@ -423,8 +446,8 @@ with t2:
     for i, feat in enumerate(FEATURES):
         fig.add_annotation(
             x=comps[0,i]*sc, y=comps[1,i]*sc, ax=0, ay=0,
-            text=feat, font=dict(size=11, color="#000000", weight="bold"),
-            bgcolor="rgba(255,255,255,0.9)", bordercolor="#2563EB", borderwidth=1.5, borderpad=3
+            text=feat, font=dict(size=11, color="#1C1C1E", weight="bold"),
+            bgcolor="rgba(253,250,245,0.92)", bordercolor="#3B6FB5", borderwidth=1.5, borderpad=3
         )
     fig.update_traces(marker_size=5)
     T(fig,"PCA Biplot — variables y observaciones")
@@ -452,9 +475,9 @@ with t2:
             return f
 
         pc1, pc2, pc3 = st.columns(3)
-        with pc1: st.plotly_chart(proj_fig(Xt, ys,  "t-SNE"), use_container_width=True)
-        with pc2: st.plotly_chart(proj_fig(Xl, ys,  "LLE"),   use_container_width=True)
-        with pc3: st.plotly_chart(proj_fig(Xsm,ys_sm,"Sammon (n=400)"), use_container_width=True)
+        with pc1: st.plotly_chart(proj_fig(Xt,  ys,     "t-SNE"),         use_container_width=True)
+        with pc2: st.plotly_chart(proj_fig(Xl,  ys,     "LLE"),           use_container_width=True)
+        with pc3: st.plotly_chart(proj_fig(Xsm, ys_sm,  "Sammon (n=400)"), use_container_width=True)
 
         st.success("Proyecciones completadas. PCA (lineal) muestra varianza global. t-SNE y LLE preservan estructura local. Sammon minimiza el estrés de distancias.")
 
@@ -498,11 +521,11 @@ with t3:
 
         fig = go.Figure()
         xv = df_cr["Variable"]
-        for col_n, color, name in [("Pearson r",C_OK,"Pearson r"),
-                                    ("Spearman ρ",C_G4,"Spearman ρ")]:
+        for col_n, color, name in [("Pearson r", C_OK, "Pearson r"),
+                                    ("Spearman ρ", C_G4, "Spearman ρ")]:
             fig.add_trace(go.Bar(name=name, x=xv, y=df_cr[col_n],
                                   marker_color=color, opacity=.9, marker_line_width=0))
-        fig.add_hline(y=0, line_color="#E5E7EB")
+        fig.add_hline(y=0, line_color="#DDD8CE")
         T(fig,"Correlación con 'canceled'")
         fig.update_layout(barmode="group", xaxis_tickangle=-38,
                            yaxis_title="Coeficiente", xaxis_title="")
@@ -565,12 +588,19 @@ with t4:
     elif chart_type == "Violin":
         fig_ex = px.violin(df_ex, x=color_var, y=y_var, color=color_var,
                             color_discrete_sequence=PAL, box=True)
-    else:
+    else:  # Histogram
         fig_ex = px.histogram(df_ex, x=x_var, color=color_var,
                                color_discrete_sequence=PAL,
                                barmode="overlay", opacity=.8, nbins=40)
 
-    fig_ex.update_traces(marker_line_width=0, marker_size=5)
+    # ── CORRECCIÓN DEL BUG ────────────────────────────────────────────────────
+    # marker_line_width se puede aplicar a todos los tipos sin problema.
+    # marker_size solo se aplica a scatter (histogramas/box/violin no lo soportan).
+    fig_ex.update_traces(marker_line_width=0)
+    if chart_type == "Scatter":
+        fig_ex.update_traces(marker_size=5, selector=dict(type="scatter"))
+    # ─────────────────────────────────────────────────────────────────────────
+
     T(fig_ex, f"{x_var} · {y_var} — por {color_var}")
     st.plotly_chart(fig_ex, use_container_width=True)
 
@@ -609,16 +639,17 @@ with t5:
     with col_sim1:
         st.markdown("### Seleccionar Cliente")
         client_options = df.index.tolist()
-        
+
         if not client_options:
             st.warning("No hay clientes bajo los filtros actuales.")
         else:
-            selected_id = st.selectbox("Elige el ID de la reserva:", client_options[:500], help="Listando los primeros 500 bajo el filtro actual.")
-            
+            selected_id = st.selectbox("Elige el ID de la reserva:", client_options[:500],
+                                        help="Listando los primeros 500 bajo el filtro actual.")
+
             if selected_id is not None:
                 client_data = df.loc[[selected_id]]
                 X_client = client_data[mod_features].fillna(0)
-                
+
                 prob_cancel = rf_model.predict_proba(X_client)[0][1]
                 pred_label = "Va a cancelar" if prob_cancel > 0.5 else "No va a cancelar"
                 real_status = client_data['booking_status'].values[0]
@@ -632,37 +663,37 @@ with t5:
         if client_options and selected_id is not None:
             st.markdown("### Desglose de Datos del Cliente")
             st.write("Información detallada utilizada para perfilar a esta reserva en particular:")
-            
-            # Tabla formato ejecutivo limpio
+
             disp_df = client_data[mod_features].T.rename(columns={selected_id: "Valor"})
             st.table(disp_df.style.format("{:.2f}", na_rep="-").set_properties(**{
-                'background-color': '#FFFFFF',
-                'color': '#111827',
-                'border-color': '#E5E7EB',
+                'background-color': '#FDFAF5',
+                'color': '#1C1C1E',
+                'border-color': '#DDD8CE',
                 'font-weight': 'bold'
             }))
 
             st.markdown("### Comparativa de variables clave vs Promedio")
-            
+
             df_means = df_full[mod_features].mean()
             client_vals = client_data[mod_features].iloc[0]
-            
+
             comp_df = pd.DataFrame({
                 "Métrica": mod_features,
                 "Este Cliente": client_vals.values,
                 "Promedio Global": df_means.values
             })
-            
-            fig_comp = px.bar(comp_df, x="Métrica", y=["Este Cliente", "Promedio Global"], barmode="group",
-                              color_discrete_map={"Este Cliente": C_OK, "Promedio Global": "#E5E7EB"})
+
+            fig_comp = px.bar(comp_df, x="Métrica", y=["Este Cliente", "Promedio Global"],
+                              barmode="group",
+                              color_discrete_map={"Este Cliente": C_OK, "Promedio Global": "#C4BFB5"})
             T(fig_comp, "Análisis de peso de variables del Cliente")
             fig_comp.update_layout(yaxis_title="Unidades / Días / $", xaxis_tickangle=-35)
             st.plotly_chart(fig_comp, use_container_width=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<hr style='border-color:#E5E7EB;margin:2rem 0 .8rem'/>
-<div style='text-align:center;color:#4B5563;font-size:.75rem;font-weight:600;padding-bottom:.8rem'>
+<hr style='border-color:#DDD8CE;margin:2rem 0 .8rem'/>
+<div style='text-align:center;color:#5C5549;font-size:.75rem;font-weight:600;padding-bottom:.8rem'>
   Hotel Bookings Analytics · Analítica y Visualización de Datos · Alejandro López<br>
 </div>
 """, unsafe_allow_html=True)
