@@ -21,7 +21,7 @@ from scipy.optimize import minimize
 # ── PAGE CONFIG ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Hotel Analytics · Alejandro López",
-    page_icon="🏨",
+    page_icon="https://cdn-icons-png.flaticon.com/512/235/235889.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -100,7 +100,7 @@ df_full = load_data()
 with st.sidebar:
     st.markdown("""
     <div style='text-align:center;padding:1rem 0 .5rem'>
-      <div style='font-size:2rem'>🏨</div>
+      <div style='font-size:2rem'><img src="https://cdn-icons-png.flaticon.com/512/235/235889.png"></div>
       <div style='font-weight:800;font-size:1.05rem'>Hotel Analytics</div>
       <div style='font-size:.72rem;color:#8B949E'>Alejandro López</div>
     </div>
@@ -108,11 +108,11 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="sh">Filtros globales</div>', unsafe_allow_html=True)
-    sel_year   = st.selectbox("📅 Año", ["Todos"] + [str(y) for y in sorted(df_full["arrival_year"].unique())])
+    sel_year   = st.selectbox("Año", ["Todos"] + [str(y) for y in sorted(df_full["arrival_year"].unique())])
     sel_months = st.multiselect("🗓 Meses", options=sorted(df_full["arrival_month"].unique()),
                                  default=sorted(df_full["arrival_month"].unique()),
                                  format_func=lambda m: MONTHS[m])
-    sel_meal   = st.multiselect("🍽 Plan de comida",
+    sel_meal   = st.multiselect("Plan de comida",
                                  options=df_full["type_of_meal_plan"].unique().tolist(),
                                  default=df_full["type_of_meal_plan"].unique().tolist())
     sel_status = st.pills("Estado reserva",
@@ -134,7 +134,7 @@ if sel_meal:                  df = df[df["type_of_meal_plan"].isin(sel_meal)]
 if sel_status != "Todos":     df = df[df["booking_status"] == sel_status]
 
 if df.empty:
-    st.warning("⚠️ Sin datos con los filtros actuales.")
+    st.warning("Sin datos con los filtros actuales.")
     st.stop()
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
@@ -164,10 +164,10 @@ st.markdown("<div style='height:.5rem'/>", unsafe_allow_html=True)
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
 t1,t2,t3,t4 = st.tabs([
-    "📊 Visión General",
-    "🔵 Proyecciones",
-    "🔗 Correlaciones",
-    "🔍 Explorador",
+    "Visión General",
+    "Proyecciones",
+    "Correlaciones",
+    "Explorador",
 ])
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -358,7 +358,7 @@ with t2:
     sh("Proyecciones no lineales — t-SNE · LLE · Sammon")
     st.info(f"⏱ Calcular con **{proj_n}** puntos (~15-40 s). El resultado se cachea automáticamente.")
 
-    if st.button("▶ Calcular t-SNE, LLE y Mapa de Sammon", type="primary"):
+    if st.button("Calcular t-SNE, LLE y Mapa de Sammon", type="primary"):
         st.session_state["run_proj"] = True
 
     if st.session_state.get("run_proj"):
@@ -380,7 +380,7 @@ with t2:
         with pc2: st.plotly_chart(proj_fig(Xl, ys,  "LLE"),   use_container_width=True)
         with pc3: st.plotly_chart(proj_fig(Xsm,ys_sm,"Sammon (n=400)"), use_container_width=True)
 
-        st.success("✅ Proyecciones completadas. PCA (lineal) muestra varianza global. t-SNE y LLE preservan estructura local. Sammon minimiza el estrés de distancias.")
+        st.success("Proyecciones completadas. PCA (lineal) muestra varianza global. t-SNE y LLE preservan estructura local. Sammon minimiza el estrés de distancias.")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # TAB 3 — CORRELACIONES
@@ -435,7 +435,7 @@ with t3:
 
     sh("Tabla de coeficientes y significancia")
     df_show = df_cr.copy()
-    df_show["Sig."] = df_show["p_p"].apply(lambda p:"✅" if p<0.05 else "❌")
+    df_show["Sig."] = df_show["p_p"].apply(lambda p:"Correcto" if p<0.05 else "Incorrecto")
     st.dataframe(df_show.rename(columns={"p_p":"p (P)","p_s":"p (S)"}),
                  use_container_width=True, hide_index=True)
 
@@ -506,7 +506,7 @@ with t4:
 
     sh("Descargar datos filtrados")
     csv_bytes = df.to_csv(index=False).encode("utf-8")
-    st.download_button("⬇️ Descargar dataset filtrado (.csv)", data=csv_bytes,
+    st.download_button("Descargar dataset filtrado (.csv)", data=csv_bytes,
                         file_name="hotel_filtrado.csv", mime="text/csv")
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
