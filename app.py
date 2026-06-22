@@ -287,7 +287,7 @@ df_full = load_data()
 with st.sidebar:
     st.markdown("""
     <div style='text-align:center;padding:1rem 0 .5rem'>
-      <div style='font-size:2rem'><img src="https://cdn-icons-png.flaticon.com/512/235/235889.png"></div>
+      <div style='font-size:2rem'><img src="https://i.pinimg.com/1200x/8e/f8/26/8ef826276878233df8e2c68f167062fc.jpg"></div>
       <div style='font-weight:800;font-size:1.05rem;color:#1C1C1E;'>Hotel Analytics</div>
       <div style='font-size:.72rem;color:#5C5549'>Alejandro López</div>
     </div>
