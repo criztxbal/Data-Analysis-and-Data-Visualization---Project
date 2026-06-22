@@ -30,12 +30,17 @@ st.set_page_config(
 # ── ESTILOS ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
 
 :root {
-    --bg: #0D1117; --surf: #161B22; --bord: #30363D; --acc: #58A6FF;
-    --red: #F78166; --grn: #3FB950; --purp: #D2A8FF; --ora: #FFA657;
-    --txt: #E6EDF3; --muted: #8B949E; --r: 12px;
+    /* Paleta Premium Slate */
+    --bg: #0F172A;       /* Fondo principal oscuro pero con tono azulado */
+    --surf: #1E293B;     /* Fondo de tarjetas ligeramente más claro */
+    --bord: #334155;     /* Bordes sutiles */
+    --acc: #3B82F6;      /* Azul vibrante principal */
+    --txt: #F8FAFC;      /* Texto principal blanco brillante */
+    --muted: #94A3B8;    /* Texto secundario gris claro (alta legibilidad) */
+    --r: 12px;
 }
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
     background: var(--bg) !important;
@@ -49,92 +54,62 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
 [data-testid="stSidebar"] * {
     color: var(--txt) !important;
 }
-
-/* --- Tarjetas de KPIs con efecto Hover --- */
 [data-testid="stMetric"] {
     background: var(--surf) !important;
     border: 1px solid var(--bord);
     border-radius: var(--r);
     padding: 1.2rem 1.5rem !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-[data-testid="stMetric"]:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 15px rgba(88,166,255,0.15);
-    border-color: var(--acc);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 [data-testid="stMetricLabel"] {
     color: var(--muted) !important;
-    font-size: 0.75rem;
+    font-size: 0.8rem; /* Letra un poco más grande */
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
 }
 [data-testid="stMetricValue"] {
     color: var(--txt) !important;
-    font-size: 2rem;
+    font-size: 2.2rem; /* Números más impactantes */
     font-weight: 800;
 }
-
-/* --- Pestañas (Tabs) --- */
-button[data-baseweb="tab"] {
-    background: transparent !important;
-    color: var(--muted) !important;
-    border-bottom: 2px solid transparent !important;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-button[data-baseweb="tab"][aria-selected="true"] {
-    color: var(--acc) !important;
-    border-bottom-color: var(--acc) !important;
-}
-
-/* --- Títulos de Sección Mejorados --- */
 .sh {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #F8FAFC; /* Títulos de sección en blanco puro */
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-left: 4px solid var(--acc);
-    padding-left: 0.6rem;
-    margin: 1.8rem 0 1rem;
-    background: linear-gradient(90deg, rgba(88,166,255,0.1) 0%, transparent 100%);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-}
-.badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 800;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    background: rgba(88,166,255,0.15);
-    color: var(--acc);
-    border: 1px solid rgba(88,166,255,0.3);
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.05em;
+    padding-left: 0.7rem;
+    margin: 2rem 0 1rem;
+    background: linear-gradient(90deg, rgba(59,130,246,0.15) 0%, transparent 100%);
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # ── COLORES & TEMA ─────────────────────────────────────────────────────────────
-C_OK, C_CANCEL, C_G3, C_G4, C_G5 = "#58A6FF","#F78166","#3FB950","#D2A8FF","#FFA657"
-PAL = [C_OK, C_CANCEL, C_G3, C_G4, C_G5, "#79C0FF", "#FF7B72"]
+# Colores más brillantes para que destaquen en el fondo oscuro
+C_OK, C_CANCEL, C_G3, C_G4, C_G5 = "#60A5FA", "#FB7185", "#34D399", "#C084FC", "#FBBF24"
+PAL = [C_OK, C_CANCEL, C_G3, C_G4, C_G5, "#38BDF8", "#F43F5E"]
 
-# Configuración base más limpia para las gráficas
+# Configuración base de alto contraste para legibilidad
 BASE = dict(
     paper_bgcolor="rgba(0,0,0,0)", 
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#8B949E", family="Inter", size=12),
-    margin=dict(l=10, r=10, t=40, b=20),
-    legend=dict(bgcolor="rgba(22,27,34,0.7)", bordercolor="#30363D", borderwidth=1),
-    xaxis=dict(gridcolor="#1C2128", linecolor="#30363D", zerolinecolor="#30363D", title_font=dict(color="#E6EDF3")),
-    yaxis=dict(gridcolor="#1C2128", linecolor="#30363D", zerolinecolor="#30363D", title_font=dict(color="#E6EDF3"))
+    font=dict(color="#E2E8F0", family="Inter", size=13), # Letra más grande y casi blanca
+    margin=dict(l=10, r=10, t=50, b=30),
+    legend=dict(bgcolor="rgba(30,41,59,0.9)", bordercolor="#475569", borderwidth=1, font=dict(color="#F8FAFC", size=12)),
+    xaxis=dict(gridcolor="#334155", linecolor="#475569", zerolinecolor="#475569", title_font=dict(color="#F8FAFC", size=14, weight="bold"), tickfont=dict(color="#CBD5E1", size=11)),
+    yaxis=dict(gridcolor="#334155", linecolor="#475569", zerolinecolor="#475569", title_font=dict(color="#F8FAFC", size=14, weight="bold"), tickfont=dict(color="#CBD5E1", size=11))
 )
+
+def T(fig, title=""):
+    fig.update_layout(**BASE)
+    if title:
+        fig.update_layout(title=dict(text=title, font=dict(size=16, color="#F8FAFC", weight="bold"), x=0))
+    return fig
 
 def T(fig, title=""):
     fig.update_layout(**BASE)
@@ -425,13 +400,17 @@ with t2:
                                           "y":f"PC2 ({ev2[1]*100:.1f}% var)"})
     sc = 3.5
     for i, feat in enumerate(FEATURES):
-        fig.add_annotation(x=comps[0,i]*sc, y=comps[1,i]*sc, ax=0, ay=0,
-            arrowhead=3, arrowwidth=1.2, arrowcolor="#8B949E",
-            text=feat, font=dict(size=8,color="#E6EDF3"),
-            bgcolor="rgba(22,27,34,.75)")
-    fig.update_traces(marker_size=4)
-    T(fig,"PCA Biplot — variables y observaciones")
-    st.plotly_chart(fig, use_container_width=True)
+        fig.add_annotation(
+            x=comps[0,i]*sc, y=comps[1,i]*sc, 
+            ax=0, ay=0,
+            text=feat, 
+            font=dict(size=11, color="#FFFFFF", weight="bold"), # Texto blanco, más grande y negrita
+            bgcolor="rgba(15,23,42,0.85)", # Fondo oscuro semi-opaco para tapar la cuadrícula/puntos
+            bordercolor="#3B82F6", # Borde azul sutil
+            borderwidth=1,
+            borderpad=3
+        )
+    fig.update_traces(marker_size=5) # Puntos ligeramente más grandes para que se vean mejor
 
     # ── Proyecciones no lineales: botón para calcular
     st.markdown("<div style='height:.5rem'/>", unsafe_allow_html=True)
