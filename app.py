@@ -620,7 +620,7 @@ with t5:
                 X_client = client_data[mod_features].fillna(0)
                 
                 prob_cancel = rf_model.predict_proba(X_client)[0][1]
-                pred_label = "🚨 Va a cancelar" if prob_cancel > 0.5 else "✅ No va a cancelar"
+                pred_label = "Va a cancelar" if prob_cancel > 0.5 else "No va a cancelar"
                 real_status = client_data['booking_status'].values[0]
 
                 st.markdown("### Predicción del Modelo")
