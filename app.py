@@ -54,11 +54,92 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
     color: var(--txt) !important;
 }
 
-/* Forzar que las etiquetas de Selectores y Deslizadores sean visibles y negritas */
-.stSelectbox label, .stSlider label {
+/* Labels generales */
+.stSelectbox label, .stSlider label,
+.stMultiSelect label, .stRadio label {
     color: var(--txt) !important;
     font-weight: 800 !important;
     font-size: 0.95rem !important;
+}
+
+/* ── MULTISELECT — tags (chips) ─────────────────────────────────────── */
+/* Contenedor del input */
+[data-baseweb="select"] > div {
+    background-color: var(--surf) !important;
+    border-color: var(--bord) !important;
+    border-radius: 8px !important;
+}
+/* Cada tag/chip seleccionado */
+[data-baseweb="tag"] {
+    background-color: rgba(59,111,181,0.12) !important;
+    border: 1px solid rgba(59,111,181,0.30) !important;
+    border-radius: 6px !important;
+}
+/* Texto dentro del tag */
+[data-baseweb="tag"] span {
+    color: #3B6FB5 !important;
+    font-weight: 700 !important;
+}
+/* Ícono X dentro del tag */
+[data-baseweb="tag"] [role="presentation"] svg {
+    fill: #3B6FB5 !important;
+}
+/* Dropdown de opciones */
+[data-baseweb="menu"] {
+    background-color: var(--surf) !important;
+    border: 1px solid var(--bord) !important;
+    border-radius: 8px !important;
+}
+[data-baseweb="menu"] li {
+    color: var(--txt) !important;
+}
+[data-baseweb="menu"] li:hover {
+    background-color: rgba(59,111,181,0.08) !important;
+}
+
+/* ── PILLS (st.pills / radio como pastillas) ────────────────────────── */
+/* Pastilla NO seleccionada */
+[data-testid="stPillsContainer"] button {
+    background: var(--surf) !important;
+    border: 1.5px solid var(--bord) !important;
+    color: var(--muted) !important;
+    font-weight: 700 !important;
+    border-radius: 999px !important;
+    transition: all .15s ease;
+}
+[data-testid="stPillsContainer"] button:hover {
+    border-color: #3B6FB5 !important;
+    color: #3B6FB5 !important;
+}
+/* Pastilla SELECCIONADA */
+[data-testid="stPillsContainer"] button[aria-pressed="true"],
+[data-testid="stPillsContainer"] button[aria-checked="true"] {
+    background: rgba(59,111,181,0.14) !important;
+    border-color: #3B6FB5 !important;
+    color: #3B6FB5 !important;
+}
+
+/* ── SLIDER ─────────────────────────────────────────────────────────── */
+/* Track activo (la parte coloreada) */
+[data-testid="stSlider"] [role="slider"] {
+    background: #3B6FB5 !important;
+    border-color: #3B6FB5 !important;
+}
+div[data-testid="stSlider"] > div > div > div > div {
+    background: #3B6FB5 !important;
+}
+/* Número encima del thumb */
+[data-testid="stSlider"] [data-testid="stTickBarMin"],
+[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+    color: var(--muted) !important;
+}
+
+/* ── SELECTBOX dropdown ──────────────────────────────────────────────── */
+[data-testid="stSelectbox"] > div > div {
+    background-color: var(--surf) !important;
+    border-color: var(--bord) !important;
+    border-radius: 8px !important;
+    color: var(--txt) !important;
 }
 
 /* Tarjetas de KPIs */
