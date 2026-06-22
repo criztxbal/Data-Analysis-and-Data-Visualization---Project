@@ -514,6 +514,5 @@ st.markdown("""
 <hr style='border-color:#30363D;margin:2rem 0 .8rem'/>
 <div style='text-align:center;color:#8B949E;font-size:.72rem;padding-bottom:.8rem'>
   Hotel Bookings Analytics · Analítica y Visualización de Datos · Alejandro López<br>
-  PCA · t-SNE · LLE · Mapa de Sammon · Pearson · Spearman · Chi² · Cramér's V
 </div>
 """, unsafe_allow_html=True)
