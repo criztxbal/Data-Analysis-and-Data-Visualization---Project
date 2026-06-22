@@ -30,29 +30,94 @@ st.set_page_config(
 # ── ESTILOS ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-:root{--bg:#0D1117;--surf:#161B22;--bord:#30363D;--acc:#58A6FF;
-      --red:#F78166;--grn:#3FB950;--purp:#D2A8FF;--ora:#FFA657;
-      --txt:#E6EDF3;--muted:#8B949E;--r:12px;}
-html,body,[data-testid="stAppViewContainer"],[data-testid="stApp"]
-  {background:var(--bg)!important;color:var(--txt);font-family:'Inter',sans-serif;}
-[data-testid="stSidebar"]{background:var(--surf)!important;border-right:1px solid var(--bord);}
-[data-testid="stSidebar"] *{color:var(--txt)!important;}
-[data-testid="stMetric"]{background:var(--surf)!important;border:1px solid var(--bord);
-  border-radius:var(--r);padding:1rem 1.25rem!important;}
-[data-testid="stMetricLabel"]{color:var(--muted)!important;font-size:.72rem;
-  text-transform:uppercase;letter-spacing:.06em;}
-[data-testid="stMetricValue"]{color:var(--txt)!important;font-size:1.85rem;font-weight:700;}
-button[data-baseweb="tab"]{background:transparent!important;color:var(--muted)!important;
-  border-bottom:2px solid transparent!important;font-size:.82rem;font-weight:600;
-  text-transform:uppercase;letter-spacing:.06em;}
-button[data-baseweb="tab"][aria-selected="true"]{color:var(--acc)!important;
-  border-bottom-color:var(--acc)!important;}
-.sh{font-size:.95rem;font-weight:700;color:var(--muted);text-transform:uppercase;
-    letter-spacing:.08em;border-left:3px solid var(--acc);padding-left:.55rem;
-    margin:1.4rem 0 .6rem;}
-.badge{display:inline-block;font-size:.7rem;font-weight:700;padding:.2rem .6rem;
-  border-radius:999px;background:rgba(88,166,255,.15);color:var(--acc);
-  border:1px solid rgba(88,166,255,.3);margin-bottom:.4rem;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+:root {
+    --bg: #0D1117; --surf: #161B22; --bord: #30363D; --acc: #58A6FF;
+    --red: #F78166; --grn: #3FB950; --purp: #D2A8FF; --ora: #FFA657;
+    --txt: #E6EDF3; --muted: #8B949E; --r: 12px;
+}
+html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
+    background: var(--bg) !important;
+    color: var(--txt);
+    font-family: 'Inter', sans-serif !important;
+}
+[data-testid="stSidebar"] {
+    background: var(--surf) !important;
+    border-right: 1px solid var(--bord);
+}
+[data-testid="stSidebar"] * {
+    color: var(--txt) !important;
+}
+
+/* --- Tarjetas de KPIs con efecto Hover --- */
+[data-testid="stMetric"] {
+    background: var(--surf) !important;
+    border: 1px solid var(--bord);
+    border-radius: var(--r);
+    padding: 1.2rem 1.5rem !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+[data-testid="stMetric"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(88,166,255,0.15);
+    border-color: var(--acc);
+}
+[data-testid="stMetricLabel"] {
+    color: var(--muted) !important;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+[data-testid="stMetricValue"] {
+    color: var(--txt) !important;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+/* --- Pestañas (Tabs) --- */
+button[data-baseweb="tab"] {
+    background: transparent !important;
+    color: var(--muted) !important;
+    border-bottom: 2px solid transparent !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--acc) !important;
+    border-bottom-color: var(--acc) !important;
+}
+
+/* --- Títulos de Sección Mejorados --- */
+.sh {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-left: 4px solid var(--acc);
+    padding-left: 0.6rem;
+    margin: 1.8rem 0 1rem;
+    background: linear-gradient(90deg, rgba(88,166,255,0.1) 0%, transparent 100%);
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+.badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(88,166,255,0.15);
+    color: var(--acc);
+    border: 1px solid rgba(88,166,255,0.3);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -183,7 +248,7 @@ t1,t2,t3,t4,t5 = st.tabs([
 with t1:
     # <-- MODIFICADO: Sección explícita de Hallazgos para la presentación
     st.info("""
-    **💡 Principales Hallazgos (Insights):**
+    **Principales Hallazgos (Insights):**
     * **El tiempo es crítico:** Las reservas con un 'Lead Time' alto (con mucha anticipación) tienen la mayor probabilidad de ser canceladas.
     * **Planes de Comida:** El tipo de plan de comida influye en la retención; los clientes con ciertos planes fijos tienden a comprometerse más con su estadía.
     * **Precios y Dispersión:** Las cancelaciones suelen concentrarse en reservas con precios ligeramente superiores al promedio, donde los clientes son más sensibles a cambiar de opinión.
@@ -563,7 +628,7 @@ with t5:
                 
                 # Obtener probabilidad de cancelar (clase 1)
                 prob_cancel = rf_model.predict_proba(X_client)[0][1]
-                pred_label = "🚨 Va a cancelar" if prob_cancel > 0.5 else "✅ No va a cancelar"
+                pred_label = "Va a cancelar" if prob_cancel > 0.5 else "No va a cancelar"
                 real_status = client_data['booking_status'].values[0]
 
                 st.markdown("### Predicción del Modelo")
