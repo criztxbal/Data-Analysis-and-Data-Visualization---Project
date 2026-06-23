@@ -21,7 +21,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 # ── PAGE CONFIG ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Hotel Analytics · Alejandro López",
+    page_title="Hotel Booking · Alejandro López",
     page_icon="https://i.pinimg.com/1200x/8e/f8/26/8ef826276878233df8e2c68f167062fc.jpg",
     layout="wide",
     initial_sidebar_state="expanded",
